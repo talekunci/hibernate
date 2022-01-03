@@ -1,6 +1,6 @@
 package ua.goit.dao;
 
-import ua.goit.dao.config.DataSourceHolder;
+import ua.goit.dao.config.flyway.DataSourceHolder;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

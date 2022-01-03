@@ -2,6 +2,7 @@ package ua.goit;
 
 import org.flywaydb.core.Flyway;
 import ua.goit.console.CommandHandler;
+import ua.goit.dao.config.flyway.DataSourceHolder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class Client {
     private static void initDataBase() {
         Flyway flyway = Flyway
                 .configure()
-                .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "password")
+                .dataSource(DataSourceHolder.getDataSource())
                 .load();
         flyway.migrate();
     }
