@@ -18,7 +18,7 @@ public class Developer {
     private String description;
     private int salary;
 
-        @OneToMany(cascade = CascadeType.MERGE)
+    @OneToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "developer_skills",
             joinColumns = {@JoinColumn(name = "developer_id")},
             inverseJoinColumns = {@JoinColumn(name = "skill_id")}

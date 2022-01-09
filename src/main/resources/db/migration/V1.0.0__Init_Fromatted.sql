@@ -1,7 +1,7 @@
 CREATE TABLE developers
   (
      id          SERIAL PRIMARY KEY,
-     NAME        VARCHAR(50) NOT NULL,
+     name        VARCHAR(50) NOT NULL,
      age         INTEGER,
      gender      VARCHAR(6),
      description VARCHAR(250),
@@ -11,7 +11,7 @@ CREATE TABLE developers
 CREATE TABLE companies
   (
      id          SERIAL PRIMARY KEY,
-     NAME        VARCHAR(50) NOT NULL,
+     name        VARCHAR(50) NOT NULL,
      description VARCHAR(250)
   );
 
@@ -19,7 +19,7 @@ CREATE TABLE projects
   (
      id            SERIAL PRIMARY KEY,
      company_id    INTEGER NOT NULL,
-     NAME          VARCHAR(50) NOT NULL,
+     name          VARCHAR(50) NOT NULL,
      description   VARCHAR(150),
      cost          INTEGER DEFAULT 0,
      creation_date DATE DEFAULT CURRENT_TIMESTAMP,
@@ -29,7 +29,7 @@ CREATE TABLE projects
 CREATE TABLE customers
   (
      id          SERIAL PRIMARY KEY,
-     NAME        VARCHAR(50) NOT NULL,
+     name        VARCHAR(50) NOT NULL,
      description VARCHAR(250)
   );
 

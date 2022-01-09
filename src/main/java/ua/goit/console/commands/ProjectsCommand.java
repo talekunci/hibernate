@@ -1,9 +1,11 @@
 package ua.goit.console.commands;
 
 import ua.goit.console.Command;
+import ua.goit.dao.CompanyDao;
 import ua.goit.dao.CustomerDao;
 import ua.goit.dao.DeveloperDao;
 import ua.goit.dao.ProjectDao;
+import ua.goit.model.Company;
 import ua.goit.model.Customer;
 import ua.goit.model.Developer;
 import ua.goit.model.Project;
@@ -38,12 +40,20 @@ public class ProjectsCommand implements Command {
         }
     }
 
-    private void create(String params) { // projects create COMPANY_ID NAME [description] [cost] [creation_date]
+    private void create(String params) { // projects create NAME COMPANY_ID [description] [cost] [creation_date]
         String[] paramsArray = params.split(" ");
 
         if (paramsArray.length < 2) return;
 
-        Project project = new Project(Long.parseLong(paramsArray[0]), paramsArray[1]);
+        long companyId = Long.parseLong(paramsArray[0]);
+        Optional<Company> company = CompanyDao.getInstance().get(companyId);
+
+        if (company.isEmpty()) {
+            System.out.printf("Company with id=%d does not exits.%n", companyId);
+            return;
+        }
+
+        Project project = new Project(paramsArray[1], company.get());
 
         try {
             project.setDescription(paramsArray[2]);
@@ -256,8 +266,16 @@ public class ProjectsCommand implements Command {
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
 
+            long companyId = Long.parseLong(paramsArray[1]);
+
+            Optional<Company> company = CompanyDao.getInstance().get(companyId);
+            if (company.isEmpty()) {
+                System.out.printf("Company with id=%d does not exist.%n", companyId);
+                return;
+            }
+
             try {
-                project.setCompanyId(Long.parseLong(paramsArray[1]));
+                project.setCompany(company.get());
                 project.setName(paramsArray[2]);
                 project.setDescription(paramsArray[3]);
                 project.setCost(Integer.parseInt(paramsArray[4]));
@@ -276,7 +294,7 @@ public class ProjectsCommand implements Command {
     public void printActiveMenu() {
         System.out.println("--------Project menu--------");
         System.out.println("Commands: ");
-        System.out.println("\t* create COMPANY_ID NAME [description] [cost] [creation_date]");
+        System.out.println("\t* create NAME COMPANY_ID [description] [cost] [creation_date]");
         System.out.println("\t* get ID");
         System.out.println("\t* getAll");
         System.out.println("\t* getDevelopers ID");
@@ -286,7 +304,7 @@ public class ProjectsCommand implements Command {
         System.out.println("\t* addDeveloper PROJECT_ID DEVELOPER_ID");
         System.out.println("\t* removeDeveloper PROJECT_ID DEVELOPER_ID");
         System.out.println("\t* getAllAndFormattedPrint");
-        System.out.println("\t* update ID COMPANY_ID NAME [description] [cost] [creation_date]");
+        System.out.println("\t* update ID NAME COMPANY_ID [description] [cost] [creation_date]");
         System.out.println("\t* delete ID");
     }
 }

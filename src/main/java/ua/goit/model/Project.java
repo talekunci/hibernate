@@ -10,15 +10,18 @@ import java.util.Set;
 @Table(name = "projects")
 public class Project {
 
-    @Id @GeneratedValue(generator = "projects_id_seq")
+    @Id
+    @GeneratedValue(generator = "projects_id_seq")
     private Long id = 0L;
-    @Column(name = "company_id")
-    private Long companyId;
     private String name;
     private String description;
     private int cost;
     @Column(name = "creation_date")
     private Date creationDate;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company projectCompany;
 
     @ManyToMany(mappedBy = "customerProjects")
     private Set<Customer> customers = new HashSet<>();
@@ -33,18 +36,9 @@ public class Project {
     public Project() {
     }
 
-    public Project(Long companyId, String name) {
-        this.companyId = companyId;
+    public Project(String name, Company projectCompany) {
         this.name = name;
-        creationDate = new Date(new java.util.Date().getTime());
-    }
-
-    public Project(Long companyId, String name, String description, int cost, Date creationDate) {
-        this.companyId = companyId;
-        this.name = name;
-        this.description = description;
-        this.cost = cost;
-        this.creationDate = creationDate;
+        this.projectCompany = projectCompany;
     }
 
     public Long getId() {
@@ -53,14 +47,6 @@ public class Project {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getCompanyId() {
-        return companyId;
-    }
-
-    public void setCompanyId(Long companyId) {
-        this.companyId = companyId;
     }
 
     public String getName() {
@@ -95,6 +81,14 @@ public class Project {
         this.creationDate = creationDate;
     }
 
+    public Company getCompany() {
+        return projectCompany;
+    }
+
+    public void setCompany(Company projectCompany) {
+        this.projectCompany = projectCompany;
+    }
+
     public Set<Customer> getCustomers() {
         return customers;
     }
@@ -107,8 +101,8 @@ public class Project {
         return projectDevelopers;
     }
 
-    public void setDevelopers(Set<Developer> developers) {
-        this.projectDevelopers = developers;
+    public void setDevelopers(Set<Developer> projectDevelopers) {
+        this.projectDevelopers = projectDevelopers;
     }
 
     @Override
@@ -116,23 +110,35 @@ public class Project {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return getId().equals(project.getId())
-                && getCompanyId().equals(project.getCompanyId())
-                && getName().equals(project.getName())
+        return getCost() == project.getCost()
+                && Objects.equals(getId(), project.getId())
+                && Objects.equals(getName(), project.getName())
                 && Objects.equals(getDescription(), project.getDescription())
-                && getCreationDate().equals(project.getCreationDate());
+                && Objects.equals(getCreationDate(), project.getCreationDate())
+                && Objects.equals(projectCompany, project.projectCompany)
+                && Objects.equals(getCustomers(), project.getCustomers())
+                && Objects.equals(projectDevelopers, project.projectDevelopers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getCompanyId(), getName(), getDescription(), getCreationDate());
+        return Objects.hash(
+                getId(),
+                getName(),
+                getDescription(),
+                getCost(),
+                getCreationDate(),
+                projectCompany,
+                getCustomers(),
+                projectDevelopers
+        );
     }
 
     @Override
     public String toString() {
         return "Project{" +
                 "id=" + id +
-                ", companyId=" + companyId +
+                ", company='" + projectCompany + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", cost=" + cost +

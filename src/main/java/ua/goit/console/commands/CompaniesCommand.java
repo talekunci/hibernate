@@ -5,6 +5,7 @@ import ua.goit.dao.CompanyDao;
 import ua.goit.dao.DeveloperDao;
 import ua.goit.model.Company;
 import ua.goit.model.Developer;
+import ua.goit.model.Project;
 
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +25,7 @@ public class CompaniesCommand implements Command {
             case "getAll" -> getAll();
             case "get" -> get(subParams);
             case "getDevelopers" -> getDevelopers(subParams);
+            case "getProjects" -> getProjects(subParams);
             case "create" -> create(subParams);
             case "addDeveloper" -> addDeveloper(subParams);
             case "removeDeveloper" -> removeDeveloper(subParams);
@@ -87,6 +89,31 @@ public class CompaniesCommand implements Command {
                         System.out.printf("Company with ID=%d has no developers.%n", id);
                     } else {
                         developers.forEach(System.out::println);
+                    }
+                },
+                () -> System.out.printf("Company with ID=%s not found.%n", idStr)
+        );
+    }
+
+    private void getProjects(String params) {
+        String idStr = params.split(" ")[0].trim();
+
+        long id;
+
+        try {
+            id = Long.parseLong(idStr);
+        } catch (NumberFormatException e) {
+            System.out.println("\t***Wrong ID format***\n");
+            return;
+        }
+
+        dao.get(id).ifPresentOrElse(
+                c -> {
+                    Set<Project> projects = c.getProjects();
+                    if (projects.isEmpty()) {
+                        System.out.printf("Company with ID=%d has no projects.%n", id);
+                    } else {
+                        projects.forEach(System.out::println);
                     }
                 },
                 () -> System.out.printf("Company with ID=%s not found.%n", idStr)
@@ -214,6 +241,7 @@ public class CompaniesCommand implements Command {
         System.out.println("\t* create NAME [description]");
         System.out.println("\t* get ID");
         System.out.println("\t* getDevelopers ID");
+        System.out.println("\t* getProjects(not editable) ID");
         System.out.println("\t* addDeveloper COMPANY_ID DEVELOPER_ID");
         System.out.println("\t* removeDeveloper COMPANY_ID DEVELOPER_ID");
         System.out.println("\t* getAll");

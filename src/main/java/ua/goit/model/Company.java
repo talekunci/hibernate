@@ -14,6 +14,9 @@ public class Company {
     private String name;
     private String description;
 
+    @OneToMany(mappedBy = "projectCompany")
+    private Set<Project> companyProjects;
+
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "developerCompanies")
     private Set<Developer> companyDevelopers = new HashSet<>();
 
@@ -59,6 +62,14 @@ public class Company {
 
     public void setDevelopers(Set<Developer> developers) {
         this.companyDevelopers = developers;
+    }
+
+    public Set<Project> getProjects() {
+        return companyProjects;
+    }
+
+    public void setProjects(Set<Project> companyProjects) {
+        this.companyProjects = companyProjects;
     }
 
     @Override
